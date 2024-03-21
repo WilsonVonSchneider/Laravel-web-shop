@@ -6,9 +6,16 @@ use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Models\User;
+use App\Services\Admin\Users\UserService;
 
 class AdminUserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
    /**
     * @OA\Get(
     *     path="/api/paginated",
@@ -22,7 +29,7 @@ class AdminUserController extends Controller
     *         @OA\Schema(type="string", enum={"name", "email"})
     *     ),
     *     @OA\Parameter(
-    *         name="sort_direction",
+    *         name="sort",
     *         in="query",
     *         description="Sort direction for the results.",
     *         @OA\Schema(type="string", enum={"asc", "desc"})
@@ -94,35 +101,33 @@ class AdminUserController extends Controller
     public function paginated (Request $request) : JsonResponse {
         $request->validate([
             'sort_by' => ['nullable', 'string', 'in:name,email'],
-            'sort_direction' => ['nullable', 'string', 'in:asc,desc'],
+            'sort' => ['nullable', 'string', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
             'page' => ['nullable', 'integer', 'min:1'],
         ]);
 
-        $sortBy = $request->input('sort_by', 'name');
-        $sort = $request->input('sort_direction', 'asc');
-        $perPage = $request->input('per_page', 10);
-        $page = $request->input('page', 1); 
-
-        $data = User::orderBy($sortBy, $sort)->paginate($perPage, ['*'], 'page', $page);
-
-        // Retrieve page information
-        $users = $data->items();
-        $currentPage = $data->currentPage();
-        $total = $data->total();
-        $perPage = $data->perPage();
-        $lastPage = $data->lastPage();
-
-        return response()->json([
-            'users' => $users,
-            'page_info' => [
-            'current_page' => $currentPage,
-            'total' => $total,
-            'per_page' => $perPage,
-            'last_page' => $lastPage,
-            'requested_page' => $page, 
-            ]
-        ]);
+        try{
+            $sortBy = $request->input('sort_by', 'name');
+            $sort = $request->input('sort', 'asc');
+            $perPage = $request->input('per_page', 10);
+            $page = $request->input('page', 1); 
+    
+            $data = $this->userService->paginated($sortBy, $sort, $perPage, $page);
+    
+            return response()->json([
+                'users' => $data->items(),
+                'page_info' => [
+                'current_page' => $data->currentPage(),
+                'total' => $data->total(),
+                'per_page' => $data->perPage(),
+                'last_page' => $data->lastPage(),
+                'requested_page' => $page, 
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+       
     }
 
     /**
@@ -176,15 +181,15 @@ class AdminUserController extends Controller
     * )
     */
     public function show (Request $request) : JsonResponse {
-        $user_id = $request->route('user_id');
+        try {
+            $user_id = $request->route('user_id');
 
-        $user = User::find($user_id);
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+            $user = $this->userService->getById($user_id);
+            
+            return response()->json(['user' => $user]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
-    
-        return response()->json(['user' => $user]);
     }
 
     /**
@@ -255,21 +260,15 @@ class AdminUserController extends Controller
             'is_admin' => ['boolean'],
         ]);
 
-        $user_id = $request->route('user_id');
-
-        $user = User::find($user_id);
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+        try {
+            $userId = $request->route('user_id');
+           
+            $this->userService->update($userId, $data);
+            
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
-
-        $user->name = $data['name'];
-        if (isset($data['is_admin'])) {
-            $user->is_admin = $data['is_admin'];
-        };
-        $user->save();
-
-        return response()->json(['user' => $user]);
     }
 
     /**
@@ -316,18 +315,15 @@ class AdminUserController extends Controller
     *      )
     * )
     */
+    public function delete (Request $request) : JsonResponse {
+        try {
+            $userId = $request->route('user_id');
 
-    public function delete (Request $request) {
-        $user_id = $request->route('user_id');
+            $this->userService->delete($userId);
 
-        $user = User::find($user_id);
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
-
-        $user->delete();
-
-        return response()->json([], 200);
     }
 }

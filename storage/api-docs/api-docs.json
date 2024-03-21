@@ -27,7 +27,7 @@
                         }
                     },
                     {
-                        "name": "sort_direction",
+                        "name": "sort",
                         "in": "query",
                         "description": "Sort direction for the results.",
                         "schema": {
