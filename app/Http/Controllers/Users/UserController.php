@@ -12,7 +12,7 @@ class UserController extends Controller
     * @OA\Get(
     *     path="/api/users",
     *     summary="Get authenticated user",
-    *     tags={"User"},
+    *     tags={"Users"},
     *     security={{"bearerAuth":{}}},
     *     @OA\Response(
     *         response=200,
@@ -47,16 +47,14 @@ class UserController extends Controller
     public function show () : JsonResponse {
         $user = auth()->user();
 
-        return response()->json([
-            'user' => $user,
-        ]);
+        return response()->json(['user' => $user,]);
     }
 
     /**
     * @OA\Put(
     *     path="/api/users",
     *     summary="Update user details",
-    *     tags={"User"},
+    *     tags={"Users"},
     *     security={{"bearerAuth":{}}},
     *     @OA\RequestBody(
     *         required=true,
@@ -120,7 +118,7 @@ class UserController extends Controller
     * @OA\Delete(
     *     path="/api/users",
     *     summary="Delete user",
-    *     tags={"User"},
+    *     tags={"Users"},
     *     security={{"bearerAuth":{}}},
     *     @OA\Response(
     *         response=200,
@@ -151,6 +149,5 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json([], 200);
-
     }
 }
