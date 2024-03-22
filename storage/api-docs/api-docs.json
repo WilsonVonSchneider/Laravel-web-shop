@@ -274,14 +274,14 @@
                 }
             }
         },
-        "/api/product-categories/{product_category_id}": {
+        "/api/admin/product-categories/{product_category_id}": {
             "get": {
                 "tags": [
                     "AdminProductCategories"
                 ],
                 "summary": "Retrieve a product category by ID",
                 "description": "Retrieve a product category by its ID.",
-                "operationId": "08e1325ca282c2d20e4d38eea8eab0d6",
+                "operationId": "da03b91027de6623ce6c2c8170a10403",
                 "parameters": [
                     {
                         "name": "product_category_id",
@@ -393,7 +393,7 @@
                 ],
                 "summary": "Update a product category by ID",
                 "description": "Update a product category by its ID.",
-                "operationId": "c2b26b10124bf39a20abcf18a4e1077c",
+                "operationId": "ad6af78c78cbf2acfab402e7e014f6d3",
                 "parameters": [
                     {
                         "name": "product_category_id",
@@ -531,7 +531,7 @@
                 ],
                 "summary": "Delete a product category by ID",
                 "description": "Delete a product category by its ID.",
-                "operationId": "c9694442dc62bb09ff6aaee719976176",
+                "operationId": "afeb67812425e3e777338cfbb27a97ef",
                 "parameters": [
                     {
                         "name": "product_category_id",
@@ -1375,6 +1375,298 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/product-categories": {
+            "get": {
+                "tags": [
+                    "ProductCategories"
+                ],
+                "summary": "Retrieve a paginated list of products categories",
+                "description": "Retrieve a paginated list of product categories based on the provided sorting and pagination parameters.",
+                "operationId": "04ef5161751a57e05b3cd8c0810594f0",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search the results by the specified field.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Sort the results by the specified field.",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "name",
+                                "email"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort direction for the results.",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of product categories per page. Must be between 1 and 100.",
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number to retrieve. Must be a positive integer.",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "productCategories": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "parent_id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "page_info": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "requested_page": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred while processing the request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product-categories/{product_category_id}": {
+            "get": {
+                "tags": [
+                    "ProductCategories"
+                ],
+                "summary": "Retrieve a product category by ID",
+                "description": "Retrieve a product category by its ID.",
+                "operationId": "7a57759e8f4710af1f03f711e125f70c",
+                "parameters": [
+                    {
+                        "name": "product_category_id",
+                        "in": "path",
+                        "description": "ID of the product category to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "productCategory": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "type": "string"
+                                                },
+                                                "parent_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product category not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred while processing the request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/users": {
