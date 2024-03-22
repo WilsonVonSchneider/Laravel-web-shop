@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Users;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use App\Models\User;
 use App\Services\Admin\Users\UserService;
 
 class AdminUserController extends Controller
@@ -16,6 +15,7 @@ class AdminUserController extends Controller
     {
         $this->userService = $userService;
     }
+
    /**
     * @OA\Get(
     *     path="/api/paginated",
@@ -182,9 +182,9 @@ class AdminUserController extends Controller
     */
     public function show (Request $request) : JsonResponse {
         try {
-            $user_id = $request->route('user_id');
+            $userId = $request->route('user_id');
 
-            $user = $this->userService->getById($user_id);
+            $user = $this->userService->getById($userId);
             
             return response()->json(['user' => $user]);
         } catch (\Exception $e) {
