@@ -33,10 +33,10 @@ Route::group([
 
         //Admin users routes
         Route::group(['prefix' => 'users'], function () {
-            Route::get('/users', [AdminUserController::class, 'paginated']);
-            Route::get('/users/{user_id}', [AdminUserController::class, 'show']);
-            Route::put('/users/{user_id}', [AdminUserController::class, 'update']);
-            Route::delete('/users/{user_id}', [AdminUserController::class, 'delete']);
+            Route::get('', [AdminUserController::class, 'paginated']);
+            Route::get('{user_id}', [AdminUserController::class, 'show']);
+            Route::put('{user_id}', [AdminUserController::class, 'update']);
+            Route::delete('{user_id}', [AdminUserController::class, 'delete']);
         });
     });
 

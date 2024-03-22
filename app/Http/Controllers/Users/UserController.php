@@ -5,9 +5,17 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
     * @OA\Get(
     *     path="/api/users",
@@ -107,11 +115,15 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
-        $user = auth()->user();
-        $user->name = $data['name'];
-        $user->save();
+        try {
+            $user = auth()->user();
 
-        return response()->json(['user' => $user]);
+            $this->userService->update($user, $data);
+    
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 
     /**
@@ -145,9 +157,14 @@ class UserController extends Controller
     * )
     */
     public function delete() : JsonResponse {
-        $user = auth()->user();
-        $user->delete();
+        try {
+            $user = auth()->user();
 
-        return response()->json([], 200);
+            $this->userService->delete($user);
+
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
     }
 }
