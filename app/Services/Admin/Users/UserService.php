@@ -3,8 +3,9 @@
 namespace App\Services\Admin\Users;
 
 use App\Repositories\Admin\Users\UserRepository;
-use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+
+use App\Models\User;
 
 class UserService
 {

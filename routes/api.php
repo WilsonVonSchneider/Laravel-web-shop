@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Admin\Users\AdminUserController;
+use App\Http\Controllers\Admin\Products\ProductCategories\AdminProductCategoryController;
 use App\Http\Middleware\AdminMiddleware;
 
 // Health check route
@@ -37,6 +38,15 @@ Route::group([
             Route::get('{user_id}', [AdminUserController::class, 'show']);
             Route::put('{user_id}', [AdminUserController::class, 'update']);
             Route::delete('{user_id}', [AdminUserController::class, 'delete']);
+        });
+
+         //Admin product category routes
+         Route::group(['prefix' => 'product-categories'], function () {
+            Route::post('', [AdminProductCategoryController::class, 'create']);
+            Route::get('', [AdminProductCategoryController::class, 'paginated']);
+            Route::get('{product_category_id}', [AdminProductCategoryController::class, 'show']);
+            Route::put('{product_category_id}', [AdminProductCategoryController::class, 'update']);
+            Route::delete('{product_category_id}', [AdminProductCategoryController::class, 'delete']);
         });
     });
 
