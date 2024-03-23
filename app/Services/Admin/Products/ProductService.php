@@ -47,6 +47,13 @@ class ProductService
         return $product;
     }
 
+    public function paginatedByCategory(string $productCategoryId, string|null $search, array $filters, string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
+    {
+        $this->getProductCategoryById($productCategoryId);
+
+        return $this->productRepository->paginatedByCategory($productCategoryId, $search, $filters, $sortBy, $sort, $perPage, $page);
+    }
+
     public function update(string $productId, array $data) : bool
     {
         $product = $this->getById($productId);
