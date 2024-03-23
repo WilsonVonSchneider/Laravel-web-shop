@@ -4,8 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Admin\Users\AdminUserController;
-use App\Http\Controllers\Admin\Products\ProductCategories\AdminProductCategoryController;
-use App\Http\Controllers\Products\ProductCategories\ProductCategoryController;
+use App\Http\Controllers\Admin\Products\AdminProductCategoryController;
+use App\Http\Controllers\Admin\Products\AdminProductController;
+use App\Http\Controllers\Products\ProductCategoryController;
 use App\Http\Middleware\AdminMiddleware;
 
 // Health check route
@@ -54,6 +55,15 @@ Route::group([
             Route::get('{product_category_id}', [AdminProductCategoryController::class, 'show']);
             Route::put('{product_category_id}', [AdminProductCategoryController::class, 'update']);
             Route::delete('{product_category_id}', [AdminProductCategoryController::class, 'delete']);
+        });
+
+        //Admin product routes
+        Route::group(['prefix' => 'products'], function () {
+            Route::post('', [AdminProductController::class, 'create']);
+            Route::get('', [AdminProductController::class, 'paginated']);
+            Route::get('{product_id}', [AdminProductController::class, 'show']);
+            Route::put('{product_id}', [AdminProductController::class, 'update']);
+            Route::delete('{product_id}', [AdminProductController::class, 'delete']);
         });
     });
 
