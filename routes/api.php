@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Users\AdminUserController;
 use App\Http\Controllers\Admin\Products\AdminProductCategoryController;
 use App\Http\Controllers\Admin\Products\AdminProductController;
 use App\Http\Controllers\Products\ProductCategoryController;
+use App\Http\Controllers\Products\ProductController;
 use App\Http\Middleware\AdminMiddleware;
 
 // Health check route
@@ -35,6 +36,12 @@ Route::group([
      Route::group(['prefix' => 'product-categories'], function() {
         Route::get('', [ProductCategoryController::class, 'paginated']);
         Route::get('{product_category_id}', [ProductCategoryController::class, 'show']);
+    });
+
+     // Product routes
+     Route::group(['prefix' => 'products'], function() {
+        Route::get('', [ProductController::class, 'paginated']);
+        Route::get('{product_id}', [ProductController::class, 'show']);
     });
 
     // Admin routes

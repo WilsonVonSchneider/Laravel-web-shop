@@ -597,14 +597,14 @@
                 }
             }
         },
-        "/products": {
+        "/api/admin/products": {
             "get": {
                 "tags": [
                     "AdminProducts"
                 ],
                 "summary": "Get paginated list of products with filters and sorting",
                 "description": "Returns a paginated list of products based on the provided filters, sorting, and pagination parameters.",
-                "operationId": "getPaginatedProducts",
+                "operationId": "bd4121b314ec847d6fbaf2a5c040e7f1",
                 "parameters": [
                     {
                         "name": "search",
@@ -835,7 +835,7 @@
                 ],
                 "summary": "Create a new product",
                 "description": "Create a new product",
-                "operationId": "createProduct",
+                "operationId": "d77e794f100f3381fc823b613779e2d1",
                 "requestBody": {
                     "description": "Product data",
                     "required": true,
@@ -941,14 +941,14 @@
                 }
             }
         },
-        "/products/{product_id}": {
+        "/api/admin/products/{product_id}": {
             "get": {
                 "tags": [
                     "AdminProducts"
                 ],
                 "summary": "Get a product by ID",
                 "description": "Returns details of a product based on the provided ID",
-                "operationId": "getProductById",
+                "operationId": "1226f7412b4b3a838818eba92f6d112b",
                 "parameters": [
                     {
                         "name": "product_id",
@@ -1006,7 +1006,7 @@
                         }
                     },
                     "404": {
-                        "description": "Product category not found",
+                        "description": "Product not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1077,16 +1077,14 @@
                         }
                     }
                 }
-            }
-        },
-        "/your-endpoint-path/{product_id}": {
+            },
             "post": {
                 "tags": [
                     "AdminProducts"
                 ],
                 "summary": "Update a product",
                 "description": "Updates an existing product based on the provided ID",
-                "operationId": "updateProduct",
+                "operationId": "1aac88fa19651ef321759ae07bd5834c",
                 "parameters": [
                     {
                         "name": "product_id",
@@ -1141,7 +1139,7 @@
                         "description": "Successful operation. The product was updated successfully."
                     },
                     "404": {
-                        "description": "Product category not found",
+                        "description": "Product not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1212,16 +1210,14 @@
                         }
                     }
                 }
-            }
-        },
-        "/api/admin/product/{product_id}": {
+            },
             "delete": {
                 "tags": [
                     "AdminProducts"
                 ],
                 "summary": "Delete a product by ID",
                 "description": "Delete a product by its ID.",
-                "operationId": "31271665e9ce17e210928622a3458504",
+                "operationId": "8597247062f0497a4b73144a0a5d0b66",
                 "parameters": [
                     {
                         "name": "product_id",
@@ -2313,6 +2309,377 @@
                                     "properties": {
                                         "error": {
                                             "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred while processing the request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get paginated list of products with filters and sorting",
+                "description": "Returns a paginated list of products based on the provided filters, sorting, and pagination parameters.",
+                "operationId": "8be61fcb01890015a390c7909d6b42d6",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search term to filter products by name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Field to sort products by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "name",
+                                "price"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort order",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of products per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "price",
+                        "in": "query",
+                        "description": "Filter for price",
+                        "required": false,
+                        "schema": {
+                            "type": "float"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter for name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Filter for category name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation. Returns a paginated list of products.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "products": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "price": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "categories": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "format": "uuid"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                },
+                                                                "updated_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "page_info": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "requested_page": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Internal Server Error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred while processing the request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{product_id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get a product by ID",
+                "description": "Returns details of a product based on the provided ID",
+                "operationId": "803443f4d7dd3a5814f6874afd2001a7",
+                "parameters": [
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "description": "ID of the product to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "product": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "type": "string"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "published": {
+                                                    "type": "boolean"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
                                         }
                                     },
                                     "type": "object"
