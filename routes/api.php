@@ -6,6 +6,7 @@ use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Admin\Users\AdminUserController;
 use App\Http\Controllers\Admin\Products\AdminProductCategoryController;
 use App\Http\Controllers\Admin\Products\AdminProductController;
+use App\Http\Controllers\Admin\Products\AdminProductPriceListController;
 use App\Http\Controllers\Products\ProductCategoryController;
 use App\Http\Controllers\Products\ProductController;
 use App\Http\Middleware\AdminMiddleware;
@@ -59,7 +60,7 @@ Route::group([
             Route::delete('{user_id}', [AdminUserController::class, 'delete']);
         });
 
-         //Admin product category routes
+        //Admin product category routes
          Route::group(['prefix' => 'product-categories'], function () {
             Route::post('', [AdminProductCategoryController::class, 'create']);
             Route::get('', [AdminProductCategoryController::class, 'paginated']);
@@ -75,6 +76,15 @@ Route::group([
             Route::get('{product_id}', [AdminProductController::class, 'show']);
             Route::put('{product_id}', [AdminProductController::class, 'update']);
             Route::delete('{product_id}', [AdminProductController::class, 'delete']);
+        });
+
+        //Admin product price list routes
+         Route::group(['prefix' => 'product-price-lists'], function () {
+            Route::post('', [AdminProductPriceListController::class, 'create']);
+            Route::get('', [AdminProductPriceListController::class, 'paginated']);
+            Route::get('{product_price_list_id}', [AdminProductPriceListController::class, 'show']);
+            Route::put('{product_price_list_id}', [AdminProductPriceListController::class, 'update']);
+            Route::delete('{product_price_list_id}', [AdminProductPriceListController::class, 'delete']);
         });
     });
 
