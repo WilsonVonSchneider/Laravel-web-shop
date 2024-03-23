@@ -35,7 +35,11 @@ Route::group([
      // Product category routes
      Route::group(['prefix' => 'product-categories'], function() {
         Route::get('', [ProductCategoryController::class, 'paginated']);
-        Route::get('{product_category_id}', [ProductCategoryController::class, 'show']);
+
+        Route::group(['prefix' => '{product_category_id}'], function() {
+            Route::get('', [ProductCategoryController::class, 'show']);
+            Route::get('products', [ProductCategoryController::class, 'products']);
+        });
     });
 
      // Product routes

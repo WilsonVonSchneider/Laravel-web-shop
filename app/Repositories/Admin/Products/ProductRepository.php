@@ -40,6 +40,27 @@ class ProductRepository
         return $query->paginate($perPage, ['*'], 'page', $page);
     }
 
+    public function paginatedByCategory(string $productCategoryId, string|null $search, array $filters, string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
+    {
+        $query = Product::whereHas('categories', function ($query) use ($productCategoryId) {
+            $query->where('id', $productCategoryId);
+        });
+        
+        if ($search) {
+            $query->where('name', 'ilike', '%' . $search . '%');
+        }
+        if (isset($filters['price'])) {
+            $query->where('price', $filters['price']);
+        }
+        if (isset($filters['name'])) {
+            $query->where('name', 'ilike', '%' . $filters['name'] . '%');
+        }
+
+        $query->orderBy($sortBy, $sort ?? 'asc');
+
+        return $query->paginate($perPage, ['*'], 'page', $page);
+    }
+
     public function getById(string $productId) : Product|null
     {
         return Product::with('categories')->find($productId);

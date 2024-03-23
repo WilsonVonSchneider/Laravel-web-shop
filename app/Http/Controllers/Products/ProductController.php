@@ -163,6 +163,7 @@ class ProductController extends Controller
                 'per_page' => $data->perPage(),
                 'last_page' => $data->lastPage(),
                 'requested_page' => $page, 
+                'filters' => $filters
                 ]
             ]);
         } catch (\Exception $e) {

@@ -5,15 +5,18 @@ namespace App\Http\Controllers\Products;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Products\ProductCategoryService;
+use App\Services\Admin\Products\ProductService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ProductCategoryController extends Controller
 {
     private $productCategoryService;
+    private $productService;
 
-    public function __construct(ProductCategoryService $productCategoryService)
+    public function __construct(ProductCategoryService $productCategoryService, ProductService $productService)
     {
         $this->productCategoryService = $productCategoryService;
+        $this->productService = $productService;
     }
 
      /**
@@ -198,6 +201,152 @@ class ProductCategoryController extends Controller
             $productCategory = $this->productCategoryService->getById($productCategoryId);
             
             return response()->json(['productCategory' => $productCategory]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+    }
+
+    /**
+    * @OA\Get(
+    *     path="/api/product-categories/{product_category_id}/products",
+    *      tags={"ProductCategories"},
+    *      summary="Get paginated list of products by category",
+    *      description="Returns a paginated list of products filtered by category ID.",
+    *      @OA\Parameter(
+    *          name="product_category_id",
+    *          in="path",
+    *          description="ID of the product category",
+    *          required=true,
+    *          @OA\Schema(type="string")
+    *      ),
+    *      @OA\Parameter(
+    *          name="search",
+    *          in="query",
+    *          description="Search term to filter products by name",
+    *          required=false,
+    *          @OA\Schema(type="string")
+    *      ),
+    *      @OA\Parameter(
+    *          name="sort_by",
+    *          in="query",
+    *          description="Field to sort products by",
+    *          required=false,
+    *          @OA\Schema(type="string", enum={"name"})
+    *      ),
+    *      @OA\Parameter(
+    *          name="sort",
+    *          in="query",
+    *          description="Sort order",
+    *          required=false,
+    *          @OA\Schema(type="string", enum={"asc", "desc"})
+    *      ),
+    *      @OA\Parameter(
+    *          name="per_page",
+    *          in="query",
+    *          description="Number of products per page",
+    *          required=false,
+    *          @OA\Schema(type="integer", minimum=1, maximum=100)
+    *      ),
+    *      @OA\Parameter(
+    *          name="page",
+    *          in="query",
+    *          description="Page number",
+    *          required=false,
+    *          @OA\Schema(type="integer", minimum=1)
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Successful operation. Returns a paginated list of products filtered by category.",
+    *          @OA\JsonContent(
+    *              @OA\Property(property="products", type="array", 
+    *                  @OA\Items(
+    *                      @OA\Property(property="id", type="string", format="uuid"),
+    *                      @OA\Property(property="name", type="string"),
+    *                      @OA\Property(property="description", type="string"),
+    *                      @OA\Property(property="price", type="number", format="float"),
+    *                      @OA\Property(property="created_at", type="string", format="date-time"),
+    *                      @OA\Property(property="updated_at", type="string", format="date-time"),
+    *                      @OA\Property(property="categories", type="array",
+    *                          @OA\Items(
+    *                              @OA\Property(property="id", type="string", format="uuid"),
+    *                              @OA\Property(property="name", type="string"),
+    *                              @OA\Property(property="created_at", type="string", format="date-time"),
+    *                              @OA\Property(property="updated_at", type="string", format="date-time")
+    *                          )
+    *                      )
+    *                  )
+    *              ),
+    *              @OA\Property(property="page_info", type="object",
+    *                  @OA\Property(property="current_page", type="integer"),
+    *                  @OA\Property(property="total", type="integer"),
+    *                  @OA\Property(property="per_page", type="integer"),
+    *                  @OA\Property(property="last_page", type="integer"),
+    *                  @OA\Property(property="requested_page", type="integer"),
+    *                  @OA\Property(property="filters", type="object",
+    *                      @OA\Property(property="price", type="numeric"),
+    *                      @OA\Property(property="name", type="string")
+    *                  )
+    *              )
+    *          )
+    *      ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="Product category not found",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=401,
+    *         description="Unauthenticated",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="message", type="string", example="Unauthenticated")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=500,
+    *         description="Internal Server Error",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string", example="Internal Server Error"),
+    *             @OA\Property(property="message", type="string", example="An unexpected error occurred while processing the request.")
+    *         )
+    *     )
+    * )
+    */
+    public function products(Request $request) : JsonResponse
+    {
+        $request->validate([
+            'search' => ['nullable', 'string'],
+            'sort_by' => ['nullable', 'string', 'in:name'],
+            'sort' => ['nullable', 'string', 'in:asc,desc'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'price' => ['nullable', 'numeric'],
+            'name' => ['nullable', 'string'],
+        ]);
+
+        try{
+            $productCategoryId = $request->route('product_category_id');
+            $search = $request->input('search', null);
+            $filters = $request->only(['price', 'name']);
+            $sortBy = $request->input('sort_by', 'name');
+            $sort = $request->input('sort', 'asc');
+            $perPage = $request->input('per_page', 10);
+            $page = $request->input('page', 1); 
+    
+            $data = $this->productService->paginatedByCategory($productCategoryId, $search, $filters, $sortBy, $sort, $perPage, $page);
+    
+            return response()->json([
+                'products' => $data->items(),
+                'page_info' => [
+                'current_page' => $data->currentPage(),
+                'total' => $data->total(),
+                'per_page' => $data->perPage(),
+                'last_page' => $data->lastPage(),
+                'requested_page' => $page, 
+                'filters' => $filters
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
