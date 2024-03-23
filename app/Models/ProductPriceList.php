@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class ProductPriceList extends Model
 {
     use HasUuids, HasFactory;
 
@@ -18,15 +18,9 @@ class Product extends Model
     protected $fillable = [
         'name', 
         'description', 
-        'price',
         'sku',
-        'published'
+        'active'
     ];
-
-    public function categories()
-    {
-        return $this->belongsToMany(ProductCategory::class);
-    }
 
     public static function generateSku() {
         $datePart = date('YmdHis'); 
