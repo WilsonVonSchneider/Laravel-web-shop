@@ -7,8 +7,6 @@ use App\Services\Admin\Products\ProductCategoryService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 use App\Models\Product;
-use App\Models\ProductCategory;
-use LengthException;
 
 class ProductService
 {

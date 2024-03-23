@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Products;
+namespace App\Http\Controllers\Products;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\Admin\Products\ProductService;
-use Symfony\Component\HttpFoundation\Response;
+use App\Services\Products\ProductService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AdminProductController extends Controller
+class ProductController extends Controller
 {
     private $productService;
 
@@ -17,106 +16,10 @@ class AdminProductController extends Controller
         $this->productService = $productService;
     }
 
-    /**
-    * @OA\Post(
-    *      path="/api/admin/products",
-    *      tags={"AdminProducts"},
-    *      summary="Create a new product",
-    *      description="Create a new product",
-    *      @OA\RequestBody(
-    *          required=true,
-    *          description="Product data",
-    *          @OA\JsonContent(
-    *              required={"name", "price", "product_category_id"},
-    *              @OA\Property(
-    *                  property="name",
-    *                  type="string",
-    *                  maxLength=255,
-    *                  example="Product Name",
-    *                  description="Name of the product"
-    *              ),
-    *              @OA\Property(
-    *                  property="description",
-    *                  type="string",
-    *                  maxLength=1000,
-    *                  example="Product description",
-    *                  description="Description of the product"
-    *              ),
-    *              @OA\Property(
-    *                  property="price",
-    *                  type="number",
-    *                  format="float",
-    *                  example=10.99,
-    *                  description="Price of the product"
-    *              ),
-    *              @OA\Property(
-    *                  property="product_category_id",
-    *                  type="string",
-    *                  format="uuid",
-    *                  example="550e8400-e29b-41d4-a716-446655440000",
-    *                  description="ID of the product category"
-    *              ),
-    *              @OA\Property(
-    *                  property="published",
-    *                  type="boolean",
-    *                  example=true,
-    *                  description="Whether the product is published"
-    *              ),
-    *          ),
-    *      ),
-    *     @OA\Response(
-    *         response=204,
-    *         description="No Content: Successfully created",
-    *     ),
-    *     @OA\Response(
-    *         response=422,
-    *         description="Unprocessable Entity: Validation error",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="errors", type="object"),
-    *         ),
-    *     ),
-    *     @OA\Response(
-    *         response=401,
-    *         description="Unauthenticated",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="message", type="string", example="Unauthenticated")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=500,
-    *         description="Internal Server Error",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="error", type="string", example="Internal Server Error"),
-    *             @OA\Property(property="message", type="string", example="An unexpected error occurred while processing the request.")
-    *         )
-    *     )
-    * )
-    */
-    public function create(Request $request) : Response
-    {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'price' => ['required', 'numeric'],
-            'product_category_id' => ['required', 'uuid'],
-            'published' => ['nullable', 'boolean'],
-        ]);
-
-        try { 
-            $this->productService->create($data);
-
-            return response()->noContent();
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-   /**
+     /**
     * @OA\Get(
-    *      path="/api/admin/products",
-    *      tags={"AdminProducts"},
+    *      path="/api/products",
+    *      tags={"Products"},
     *      summary="Get paginated list of products with filters and sorting",
     *      description="Returns a paginated list of products based on the provided filters, sorting, and pagination parameters.",
     *      @OA\Parameter(
@@ -271,8 +174,8 @@ class AdminProductController extends Controller
 
     /**
     * @OA\Get(
-    *      path="/api/admin/products/{product_id}",
-    *      tags={"AdminProducts"},
+    *      path="/api/products/{product_id}",
+    *      tags={"Products"},
     *      summary="Get a product by ID",
     *      description="Returns details of a product based on the provided ID",
     *      @OA\Parameter(
@@ -344,150 +247,6 @@ class AdminProductController extends Controller
             $product = $this->productService->getById($productId);
             
             return response()->json(['product' => $product]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-    * @OA\Post(
-    *      path="/api/admin/products/{product_id}",
-    *      tags={"AdminProducts"},
-    *      summary="Update a product",
-    *      description="Updates an existing product based on the provided ID",
-    *      @OA\Parameter(
-    *          name="product_id",
-    *          in="path",
-    *          required=true,
-    *          description="ID of the product to update",
-    *          @OA\Schema(
-    *              type="string",
-    *              format="uuid",
-    *              example="550e8400-e29b-41d4-a716-446655440000"
-    *          )
-    *      ),
-    *      @OA\RequestBody(
-    *          required=true,
-    *          description="Product data to update",
-    *          @OA\JsonContent(
-    *              required={"name", "price"},
-    *              @OA\Property(property="name", type="string", maxLength=255),
-    *              @OA\Property(property="description", type="string", maxLength=1000),
-    *              @OA\Property(property="price", type="number", format="float"),
-    *              @OA\Property(property="product_category_id", type="string", format="uuid"),
-    *              @OA\Property(property="published", type="boolean")
-    *          )
-    *      ),
-    *      @OA\Response(
-    *          response=200,
-    *          description="Successful operation. The product was updated successfully."
-    *      ),
-    *     @OA\Response(
-    *         response=404,
-    *         description="Product not found",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="error", type="string")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=422,
-    *         description="Validation error",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="error", type="string", example="Validation failed"),
-    *             @OA\Property(property="message", type="string", example="The given data was invalid.")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=401,
-    *         description="Unauthenticated",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="message", type="string", example="Unauthenticated")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=500,
-    *         description="Internal Server Error",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="error", type="string", example="Internal Server Error"),
-    *             @OA\Property(property="message", type="string", example="An unexpected error occurred while processing the request.")
-    *         )
-    *     )
-    * )
-    */
-    public function update (Request $request) : JsonResponse {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'price' => ['required', 'numeric'],
-            'product_category_id' => ['uuid', 'nullable'],
-            'published' => ['nullable', 'boolean'],
-        ]);
-
-        try {
-            $productId = $request->route('product_id');
-           
-            $this->productService->update($productId, $data);
-            
-            return response()->json([], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-    * @OA\Delete(
-    *     path="/api/admin/products/{product_id}",
-    *     summary="Delete a product by ID",
-    *     description="Delete a product by its ID.",
-    *     tags={"AdminProducts"},
-    *     @OA\Parameter(
-    *         name="product_id",
-    *         in="path",
-    *         description="ID of the product to delete",
-    *         required=true,
-    *         @OA\Schema(
-    *             type="string",
-    *             format="uuid"
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=200,
-    *         description="Successful operation"
-    *     ),
-    *     @OA\Response(
-    *         response=404,
-    *         description="Product not found",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="error", type="string")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=401,
-    *         description="Unauthenticated",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="message", type="string", example="Unauthenticated")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=500,
-    *         description="Internal Server Error",
-    *         @OA\JsonContent(
-    *             @OA\Property(property="error", type="string")
-    *         )
-    *     )
-    * )
-    */
-    public function delete (Request $request) : JsonResponse {
-        try {
-            $productId = $request->route('product_id');
-
-            $this->productService->delete($productId);
-
-            return response()->json([], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (\Error $e) {
