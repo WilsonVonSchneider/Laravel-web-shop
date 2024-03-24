@@ -167,6 +167,7 @@ class ProductController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
+            dd($e);
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (\Error $e) {
             return response()->json(['error' => $e->getMessage()], 500);
