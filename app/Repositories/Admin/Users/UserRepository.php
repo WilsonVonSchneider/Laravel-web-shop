@@ -9,7 +9,7 @@ class UserRepository
 {
     public function paginated(string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
     {
-        $query = User::query();
+        $query = User::with('contracts', 'priceList.products');
 
         if ($sortBy && in_array($sortBy, ['name', 'email'])) {
             $query->orderBy($sortBy, $sort ?? 'asc');
@@ -20,7 +20,7 @@ class UserRepository
 
     public function getById(string $userId) : User|null
     {
-        return User::find($userId);
+        return User::with('contracts', 'priceList.products')->find($userId);
     }
 
     public function update(User $user, array $data) : bool

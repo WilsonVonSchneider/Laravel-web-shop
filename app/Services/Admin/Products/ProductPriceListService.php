@@ -4,7 +4,7 @@ namespace App\Services\Admin\Products;
 
 use App\Repositories\Admin\Products\ProductPriceListRepository;
 use App\Services\Admin\Products\ProductService;
-use App\Services\UserService;
+use App\Services\Admin\Users\UserService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 use App\Models\ProductPriceList;
