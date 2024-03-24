@@ -10,7 +10,7 @@ class ProductPriceListRepository
 
     public function paginated(string|null $search, string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
     {
-        $query = ProductPriceList::query();
+        $query = ProductPriceList::with('products');
 
         if ($search) {
             $query->where('name', 'ilike', '%' . $search . '%');
@@ -25,7 +25,7 @@ class ProductPriceListRepository
 
     public function getById(string $productPriceListId) : ProductPriceList|null
     {
-        return ProductPriceList::find($productPriceListId);
+        return ProductPriceList::with('products')->find($productPriceListId);
     }
 
     public function create(array $data) : ProductPriceList
