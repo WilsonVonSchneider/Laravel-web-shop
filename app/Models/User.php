@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(ProductPriceList::class, 'id', 'product_price_list_id');
     }
+
+    public function contracts()
+    {
+        return $this->hasMany(UserContractPrice::class);
+    }
 }

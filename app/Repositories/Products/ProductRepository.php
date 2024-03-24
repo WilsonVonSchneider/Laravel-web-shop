@@ -55,14 +55,13 @@ class ProductRepository
     public function getById(User $user, string $productId) : Product|null
     {
         $product = Product::select('products.*', DB::raw('COALESCE(product_product_price_list.price, products.price) as price'))
-        ->leftJoin('product_product_price_list', function ($join) use ($user) {
-            $join->on('products.id', '=', 'product_product_price_list.product_id')
-                ->where('product_product_price_list.product_price_list_id', '=', $user->product_price_list_id);
-        })
-        ->with('categories')
-        ->where('products.published', true)
-        ->where('products.id', $productId)
-        ->first();
+            ->leftJoin('product_product_price_list', function ($join) use ($user) {
+                $join->on('products.id', '=', 'product_product_price_list.product_id')
+                    ->where('product_product_price_list.product_price_list_id', '=', $user->product_price_list_id);
+            })->with('categories')
+              ->where('products.published', true)
+              ->where('products.id', $productId)
+              ->first();
 
         return $product;  
     }

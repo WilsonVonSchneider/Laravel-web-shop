@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Users\AdminUserController;
 use App\Http\Controllers\Admin\Products\AdminProductCategoryController;
 use App\Http\Controllers\Admin\Products\AdminProductController;
 use App\Http\Controllers\Admin\Products\AdminProductPriceListController;
+use App\Http\Controllers\Admin\Users\AdminUserContractListController;
 use App\Http\Controllers\Products\ProductCategoryController;
 use App\Http\Controllers\Products\ProductController;
 use App\Http\Middleware\AdminMiddleware;
@@ -60,6 +61,16 @@ Route::group([
                 Route::get('', [AdminUserController::class, 'show']);
                 Route::put('', [AdminUserController::class, 'update']);
                 Route::delete('', [AdminUserController::class, 'delete']);
+
+                Route::group(['prefix' => 'products'], function () {
+                    Route::group(['prefix' => '{product_id}'], function () {
+                        Route::group(['prefix' => 'contracts'], function () {
+                            Route::post('', [AdminUserContractListController::class, 'create']);
+                            Route::delete('', [AdminUserContractListController::class, 'delete']);
+                            Route::put('', [AdminUserContractListController::class, 'update']);
+                        });
+                    });
+                });
             });
         });
 
