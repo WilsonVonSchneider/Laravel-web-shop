@@ -9,8 +9,10 @@ class ProductRepository
 {
     public function paginated(string|null $search, array $filters, string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
     {
-        $query = Product::query()->with('categories');
-
+        $query = Product::query()->with(['categories', 'priceLists' => function ($query) {
+            $query->where('active', true);
+        }])->where('published', true);
+    
         if ($search) {
             $query->where('name', 'ilike', '%' . $search . '%');
         }
@@ -33,6 +35,8 @@ class ProductRepository
 
     public function getById(string $productId) : Product|null
     {
-        return Product::with('categories')->find($productId);
+        return Product::with(['categories', 'priceLists' => function ($query) {
+            $query->where('active', true);
+        }])->where('published', true)->find($productId);
     }
 }

@@ -28,6 +28,11 @@ class Product extends Model
         return $this->belongsToMany(ProductCategory::class);
     }
 
+    public function priceLists()
+    {
+        return $this->belongsToMany(ProductPriceList::class);
+    }
+
     public static function generateSku() {
         $datePart = date('YmdHis'); 
         $milliseconds = microtime(true) * 1000; 

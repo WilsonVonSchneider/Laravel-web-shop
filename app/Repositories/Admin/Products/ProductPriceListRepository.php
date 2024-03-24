@@ -3,7 +3,6 @@
 namespace App\Repositories\Admin\Products;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-use App\Models\ProductCategory;
 use App\Models\ProductPriceList;
 
 class ProductPriceListRepository
@@ -29,9 +28,10 @@ class ProductPriceListRepository
         return ProductPriceList::find($productPriceListId);
     }
 
-    public function create(array $data): ProductPriceList
+    public function create(array $data) : ProductPriceList
     {
         $data['sku'] = ProductPriceList::generateSku();
+
         return ProductPriceList::create($data);
     }
 
@@ -43,5 +43,26 @@ class ProductPriceListRepository
     public function delete(productPriceList $productPriceList): void
     {
         $productPriceList->delete();
+    }
+
+    public function assign(ProductPriceList $productPriceList, string $productId, float $price) : bool
+    {
+        $productPriceList->products()->attach($productId, ['price' => $price]);
+
+        return true;
+    }
+
+    public function remove(ProductPriceList $productPriceList, string $productId) : bool
+    {
+        $productPriceList->products()->detach($productId);
+
+        return true;
+    }
+
+    public function updatePrice(ProductPriceList $productPriceList, string $productId, float $price): bool
+    {
+        $productPriceList->products()->updateExistingPivot($productId, ['price' => $price]);
+
+        return true;
     }
 }

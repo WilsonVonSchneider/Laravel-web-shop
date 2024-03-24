@@ -97,7 +97,7 @@ class AdminProductController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'price' => ['required', 'numeric'],
+            'price' => ['required', 'numeric:2'],
             'product_category_id' => ['required', 'uuid'],
             'published' => ['nullable', 'boolean'],
         ]);
@@ -237,7 +237,7 @@ class AdminProductController extends Controller
             'sort' => ['nullable', 'string', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'price' => ['nullable', 'numeric'],
+            'price' => ['nullable', 'numeric:2'],
             'name' => ['nullable', 'string'],
             'category' => ['nullable', 'string'],
         ]);

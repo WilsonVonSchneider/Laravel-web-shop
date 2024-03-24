@@ -140,7 +140,7 @@ class ProductController extends Controller
             'sort' => ['nullable', 'string', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'price' => ['nullable', 'numeric'],
+            'price' => ['nullable', 'numeric:2'],
             'name' => ['nullable', 'string'],
             'category' => ['nullable', 'string'],
         ]);
