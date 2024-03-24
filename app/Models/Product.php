@@ -30,7 +30,9 @@ class Product extends Model
 
     public function priceLists()
     {
-        return $this->belongsToMany(ProductPriceList::class);
+        return $this->belongsToMany(ProductPriceList::class)
+        ->using(ProductProductPriceList::class)
+        ->withPivot('price'); 
     }
 
     public static function generateSku() {

@@ -21,7 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_admin'
+        'is_admin',
+        'product_price_list_id'
     ];
 
     /**
@@ -44,5 +45,10 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function priceList()
+    {
+        return $this->hasOne(ProductPriceList::class, 'id', 'product_price_list_id');
     }
 }
