@@ -25,4 +25,9 @@ class UserService
     {
         $this->userRepository->delete($user);
     }
+
+    public function getById(string $userId) : User 
+    {
+        return $this->userRepository->getById($userId);
+    }
 }

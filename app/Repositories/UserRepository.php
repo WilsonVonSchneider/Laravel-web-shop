@@ -16,4 +16,9 @@ class UserRepository
     {
         $user->delete();
     }
+
+    public function getById(string $userId) : User 
+    {
+        return User::with('priceList.products')->find($userId);
+    }
 }
