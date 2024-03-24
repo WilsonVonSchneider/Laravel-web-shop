@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Admin\Products;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\User;
 
 use App\Models\ProductPriceList;
 
@@ -64,5 +65,10 @@ class ProductPriceListRepository
         $productPriceList->products()->updateExistingPivot($productId, ['price' => $price]);
 
         return true;
+    }
+
+    public function updateUserPriceList(string $productPriceListId, User $user) : bool 
+    {
+        return $user->update(['product_price_list_id' => $productPriceListId]);
     }
 }
