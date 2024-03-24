@@ -3,18 +3,25 @@
 namespace App\Services\Admin\Products;
 
 use App\Repositories\Admin\Products\ProductPriceListRepository;
+use App\Services\Admin\Products\ProductService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-use App\Models\ProductCategory;
 use App\Models\ProductPriceList;
 
 class ProductPriceListService
 {
     private $productPriceListRepository;
+    private $productService;
 
-    public function __construct(ProductPriceListRepository $productPriceListRepository)
+    public function __construct(ProductPriceListRepository $productPriceListRepository, ProductService $productService)
     {
         $this->productPriceListRepository = $productPriceListRepository;
+        $this->productService = $productService;
+    }
+
+    public function getProductById($productId)
+    {
+        return $this->productService->getById($productId);
     }
 
     public function paginated(string|null $search, string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
@@ -33,7 +40,7 @@ class ProductPriceListService
         return $productPriceList;
     }
 
-    public function create(array $data): ProductPriceList
+    public function create(array $data) : ProductPriceList
     {
         return $this->productPriceListRepository->create($data);
     }
@@ -50,6 +57,57 @@ class ProductPriceListService
         $productPriceList = $this->getById($productPriceListId);
        
         $this->productPriceListRepository->delete($productPriceList);
+    }
+
+    public function assign(string $productPriceListId, string $productId, float $price) : bool
+    {
+        $productPriceList = $this->getById($productPriceListId);
+
+        if (!$productPriceList || !$productPriceList->active) {
+            return response()->json(['error' => 'The product price list does not exist or is not active.'], 404);
+        }
+
+        $product = $this->getProductById($productId);
+
+        if (!$product || !$product->published) {
+            return response()->json(['error' => 'The product does not exist or is not published.'], 404);
+        }
+
+        return $this->productPriceListRepository->assign($productPriceList, $productId, $price);
+    }
+
+    public function remove(string $productPriceListId, string $productId) : bool
+    {
+        $productPriceList = $this->getById($productPriceListId);
+
+        if (!$productPriceList || !$productPriceList->active) {
+            return response()->json(['error' => 'The product price list does not exist or is not active.'], 404);
+        }
+
+        $product = $this->getProductById($productId);
+
+        if (!$product || !$product->published) {
+            return response()->json(['error' => 'The product does not exist or is not published.'], 404);
+        }
+
+        return $this->productPriceListRepository->remove($productPriceList, $productId);
+    }
+
+    public function updatePrice(string $productPriceListId, string $productId, float $price) : bool
+    {
+        $productPriceList = $this->getById($productPriceListId);
+
+        if (!$productPriceList || !$productPriceList->active) {
+            return response()->json(['error' => 'The product price list does not exist or is not active.'], 404);
+        }
+
+        $product = $this->getProductById($productId);
+
+        if (!$product || !$product->published) {
+            return response()->json(['error' => 'The product does not exist or is not published.'], 404);
+        }
+
+        return $this->productPriceListRepository->updatePrice($productPriceList, $productId, $price);
     }
 }
 

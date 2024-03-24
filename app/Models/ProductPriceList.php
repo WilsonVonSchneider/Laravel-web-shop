@@ -22,6 +22,11 @@ class ProductPriceList extends Model
         'active'
     ];
 
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
+
     public static function generateSku() {
         $datePart = date('YmdHis'); 
         $milliseconds = microtime(true) * 1000; 

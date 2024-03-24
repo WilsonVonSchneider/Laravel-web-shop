@@ -409,4 +409,175 @@ class AdminProductPriceListController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+
+    /**
+    * @OA\Post(
+    *     path="/api/admin/product-price-lists/{product_price_list_id}/products/{product_id}",
+    *     summary="Assign product to product price list",
+    *     tags={"AdminProductPriceLists"},
+    *     @OA\RequestBody(
+    *         required=true,
+    *         @OA\JsonContent(
+    *             required={"price"},
+    *             @OA\Property(property="price", type="number", format="float", example="34.54", description="The price of the product in the price list")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Product assigned to the product price list successfully"
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="The product price list does not exist or is not active.",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=401,
+    *         description="Unauthenticated",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="message", type="string", example="Unauthenticated")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=500,
+    *         description="Internal Server Error",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     )
+    * )
+    */
+    public function assign (Request $request) : Response {
+        $data = $request->validate([
+            'price' => ['required', 'decimal:2'],
+        ]);
+
+        try {
+            $productPriceListId = $request->route('product_price_list_id');
+            $productId = $request->route('product_id');
+           
+            $this->productPriceListService->assign($productPriceListId, $productId, $data['price']);
+            
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (\Error $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+    * @OA\Delete(
+    *     path="/api/admin/product-price-lists/{product_price_list_id}/products/{product_id}",
+    *     summary="Remove product to product price list",
+    *     tags={"AdminProductPriceLists"},
+    *     @OA\RequestBody(
+    *         required=true,
+    *         @OA\JsonContent(
+    *             required={"price"},
+    *             @OA\Property(property="price", type="number", format="float", example="34.54", description="The price of the product in the price list")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Product removed to the product price list successfully"
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="The product price list does not exist or is not active.",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=401,
+    *         description="Unauthenticated",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="message", type="string", example="Unauthenticated")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=500,
+    *         description="Internal Server Error",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     )
+    * )
+    */
+    public function remove(Request $request) : Response {
+        try {
+            $productPriceListId = $request->route('product_price_list_id');
+            $productId = $request->route('product_id');
+           
+            $this->productPriceListService->remove($productPriceListId, $productId);
+            
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (\Error $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+    * @OA\Put(
+    *     path="/api/admin/product-price-lists/{product_price_list_id}/products/{product_id}",
+    *     summary="Update price of product to product price list",
+    *     tags={"AdminProductPriceLists"},
+    *     @OA\RequestBody(
+    *         required=true,
+    *         @OA\JsonContent(
+    *             required={"price"},
+    *             @OA\Property(property="price", type="number", format="float", example="34.54", description="The price of the product in the price list")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Product price updated to the product price list successfully"
+    *     ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="The product price list does not exist or is not active.",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=401,
+    *         description="Unauthenticated",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="message", type="string", example="Unauthenticated")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=500,
+    *         description="Internal Server Error",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     )
+    * )
+    */
+    public function updatePrice (Request $request) : Response {
+        $data = $request->validate([
+            'price' => ['required', 'decimal:2'],
+        ]);
+
+        try {
+            $productPriceListId = $request->route('product_price_list_id');
+            $productId = $request->route('product_id');
+           
+            $this->productPriceListService->updatePrice($productPriceListId, $productId, $data['price']);
+            
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (\Error $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
