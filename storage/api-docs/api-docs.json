@@ -2112,6 +2112,88 @@
                 }
             }
         },
+        "/api/admin/product-price-lists/{product_price_list_id}/users/{user_id}": {
+            "put": {
+                "tags": [
+                    "AdminProductPriceLists"
+                ],
+                "summary": "Update user's price list.",
+                "operationId": "f1a556d739d73609e53005c133659ce8",
+                "parameters": [
+                    {
+                        "name": "product_price_list_id",
+                        "in": "path",
+                        "description": "ID of the product price list to update for the user.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "ID of the user whose price list needs to be updated.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's price list updated successfully."
+                    },
+                    "404": {
+                        "description": "The product price list does not exist or is not active.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/paginated": {
             "get": {
                 "tags": [
