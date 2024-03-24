@@ -580,4 +580,71 @@ class AdminProductPriceListController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    /**
+    * @OA\Put(
+    *      path="/api/admin/product-price-lists/{product_price_list_id}/users/{user_id}",
+    *      summary="Update user's price list.",
+    *      tags={"AdminProductPriceLists"},
+    *      @OA\Parameter(
+    *          name="product_price_list_id",
+    *          in="path",
+    *          required=true,
+    *          description="ID of the product price list to update for the user.",
+    *          @OA\Schema(
+    *              type="string",
+    *              format="uuid"
+    *          )
+    *      ),
+    *      @OA\Parameter(
+    *          name="user_id",
+    *          in="path",
+    *          required=true,
+    *          description="ID of the user whose price list needs to be updated.",
+    *          @OA\Schema(
+    *              type="string",
+    *              format="uuid"
+    *          )
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="User's price list updated successfully."
+    *      ),
+    *     @OA\Response(
+    *         response=404,
+    *         description="The product price list does not exist or is not active.",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=401,
+    *         description="Unauthenticated",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="message", type="string", example="Unauthenticated")
+    *         )
+    *     ),
+    *     @OA\Response(
+    *         response=500,
+    *         description="Internal Server Error",
+    *         @OA\JsonContent(
+    *             @OA\Property(property="error", type="string")
+    *         )
+    *     )
+    * )
+    */
+    public function updateUserPriceList (Request $request) : JsonResponse {
+        try {
+            $productPriceListId = $request->route('product_price_list_id');
+            $userId = $request->route('user_id');
+           
+            $this->productPriceListService->updateUserPriceList($productPriceListId, $userId);
+            
+            return response()->json([], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (\Error $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

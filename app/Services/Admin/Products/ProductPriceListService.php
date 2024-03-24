@@ -4,6 +4,7 @@ namespace App\Services\Admin\Products;
 
 use App\Repositories\Admin\Products\ProductPriceListRepository;
 use App\Services\Admin\Products\ProductService;
+use App\Services\UserService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 use App\Models\ProductPriceList;
@@ -12,16 +13,23 @@ class ProductPriceListService
 {
     private $productPriceListRepository;
     private $productService;
+    private $userService;
 
-    public function __construct(ProductPriceListRepository $productPriceListRepository, ProductService $productService)
+    public function __construct(ProductPriceListRepository $productPriceListRepository, ProductService $productService, UserService $userService)
     {
         $this->productPriceListRepository = $productPriceListRepository;
         $this->productService = $productService;
+        $this->userService = $userService;
     }
 
     public function getProductById($productId)
     {
         return $this->productService->getById($productId);
+    }
+
+    public function getUserById($userId)
+    {
+        return $this->userService->getById($userId);
     }
 
     public function paginated(string|null $search, string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
@@ -109,5 +117,19 @@ class ProductPriceListService
 
         return $this->productPriceListRepository->updatePrice($productPriceList, $productId, $price);
     }
+
+    public function updateUserPriceList(string $productPriceListId, string $userId) : bool 
+    {
+        $productPriceList = $this->getById($productPriceListId);
+
+        if (!$productPriceList || !$productPriceList->active) {
+            return response()->json(['error' => 'The product price list does not exist or is not active.'], 404);
+        }
+
+        $user = $this->getUserById($userId);
+
+        return $this->productPriceListRepository->updateUserPriceList($productPriceListId, $user);
+    }
+
 }
 

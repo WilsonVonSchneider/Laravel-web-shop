@@ -104,6 +104,10 @@ Route::group([
                         Route::put('', [AdminProductPriceListController::class, 'updatePrice']);
                     });
                 });
+
+                Route::group(['prefix' => 'users'], function () {
+                    Route::put('{user_id}', [AdminProductPriceListController::class, 'updateUserPriceList']);
+                });
             });
         });
     });
