@@ -5,23 +5,28 @@ namespace App\Services\Users;
 use App\Repositories\Users\UserOrderRepository;
 use App\Services\Products\ProductService;
 use App\Services\Users\UserOrderItemService;
+use App\Services\Users\UserOrderModifierService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 use App\Models\Product;
 use App\Models\UserOrderItem;
 use App\Models\UserOrder;
+use App\Models\TaxModifier;
+use App\Models\DiscountModifier;
 
 class UserOrderService
 {
     private $userOrderRepository;
     private $productService;
     private $userOrderItemService;
+    private $userOrderModifierService;
 
-    public function __construct(UserOrderRepository $userOrderRepository, ProductService $productService, UserOrderItemService $userOrderItemService)
+    public function __construct(UserOrderRepository $userOrderRepository, ProductService $productService, UserOrderItemService $userOrderItemService, UserOrderModifierService $userOrderModifierService)
     {
         $this->userOrderRepository = $userOrderRepository;
         $this->productService = $productService;
         $this->userOrderItemService = $userOrderItemService;
+        $this->userOrderModifierService = $userOrderModifierService;
     }
 
     public function getByProductIdForOrders($productId): Product 
@@ -37,6 +42,23 @@ class UserOrderService
     public function createOrderItem(Product $product, string $orderId,  float $productWithUserPricesPrice) : UserOrderItem
     {
         return $this->userOrderItemService->create($product, $orderId,  $productWithUserPricesPrice);
+    }
+
+    public function getTax() : int
+    {
+        return $this->userOrderModifierService->getTax();
+    }
+
+    public function discountPrice(float $totalPrice) : float
+    {
+        $discountModifier = $this->userOrderModifierService->getDiscount($totalPrice);
+
+        if ($discountModifier) {
+            $discount = $totalPrice * $discountModifier->amount / 100;
+            $totalPrice -= $discount;
+        }
+
+        return $totalPrice;
     }
 
     public function create(array $data) : UserOrder
@@ -61,7 +83,10 @@ class UserOrderService
             }
         }
 
-        $taxRate = 25; 
+        
+        $taxRate = $this->getTax();
+        $totalPrice = $this->discountPrice($totalPrice);
+
         $tax = $totalPrice * $taxRate / 100;
 
         $finalOrder = $this->userOrderRepository->update($order, $totalPrice, $taxRate, $tax);
