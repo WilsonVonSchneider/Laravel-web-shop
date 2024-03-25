@@ -74,8 +74,6 @@ class AdminProductCategoryController extends Controller
             return response()->noContent();
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -198,8 +196,6 @@ class AdminProductCategoryController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -265,8 +261,6 @@ class AdminProductCategoryController extends Controller
             return response()->json(['productCategory' => $productCategory]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -348,8 +342,6 @@ class AdminProductCategoryController extends Controller
             return response()->json([], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -405,8 +397,6 @@ class AdminProductCategoryController extends Controller
             return response()->json([], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

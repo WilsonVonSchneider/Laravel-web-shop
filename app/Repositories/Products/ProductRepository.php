@@ -48,4 +48,13 @@ class ProductRepository
 
         return $product;
     }
+
+    public function getByIdForOrders(string $productId) : Product|null
+    {
+         $product =  Product::with(['categories'])
+            ->where('published', true)
+            ->find($productId);
+
+        return $product;
+    }
 }

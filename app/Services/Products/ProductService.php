@@ -42,4 +42,9 @@ class ProductService
 
         return $product;
     }
+
+    public function getByProductIdForOrders(string $productId) : Product|null
+    {
+        return $this->productRepository->getByIdForOrders($productId);
+    }
 }

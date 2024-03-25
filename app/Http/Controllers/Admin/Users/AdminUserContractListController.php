@@ -97,8 +97,6 @@ class AdminUserContractListController extends Controller
             return response()->noContent();
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -183,8 +181,6 @@ class AdminUserContractListController extends Controller
         } catch (\Exception $e) {
             dd($e);
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -253,8 +249,6 @@ class AdminUserContractListController extends Controller
         } catch (\Exception $e) {
             dd($e);
             return response()->json(['error' => $e->getMessage()], $e->getCode());
-        } catch (\Error $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Users\UserController;
+use App\Http\Controllers\Users\UserOrderController;
 use App\Http\Controllers\Admin\Users\AdminUserController;
 use App\Http\Controllers\Admin\Products\AdminProductCategoryController;
 use App\Http\Controllers\Admin\Products\AdminProductController;
@@ -32,6 +33,10 @@ Route::group([
         Route::get('', [UserController::class, 'show']);
         Route::put('', [UserController::class, 'update']);
         Route::delete('', [UserController::class, 'delete']);
+
+        Route::group(['prefix' => 'orders'], function() {
+            Route::post('', [UserOrderController::class, 'create']);
+        });
     });
 
      // Product category routes
