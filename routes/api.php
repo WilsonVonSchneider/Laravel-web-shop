@@ -36,6 +36,7 @@ Route::group([
 
         Route::group(['prefix' => 'orders'], function() {
             Route::post('', [UserOrderController::class, 'create']);
+            Route::get('', [UserOrderController::class, 'paginated']);
         });
     });
 

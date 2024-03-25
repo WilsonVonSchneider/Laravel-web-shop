@@ -21,6 +21,14 @@ class UserOrderRepository
     return $order;
   }
 
+  public function paginated(string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
+  {
+      $query = UserOrder::query()->with(['items']);
+      $query->orderBy($sortBy, $sort ?? 'asc');
+
+      return $query->paginate($perPage, ['*'], 'page', $page);
+  }
+
   public function update(UserOrder $order, float $totalPrice, int $taxRate, float $tax) : UserOrder
   {
      $order->total = $totalPrice;

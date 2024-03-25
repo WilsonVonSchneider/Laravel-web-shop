@@ -5,6 +5,7 @@ namespace App\Services\Users;
 use App\Repositories\Users\UserOrderRepository;
 use App\Services\Products\ProductService;
 use App\Services\Users\UserOrderItemService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 use App\Models\Product;
 use App\Models\UserOrderItem;
@@ -60,7 +61,6 @@ class UserOrderService
             }
         }
 
-        // Calculate tax
         $taxRate = 25; 
         $tax = $totalPrice * $taxRate / 100;
 
@@ -69,5 +69,8 @@ class UserOrderService
         return $finalOrder;
    }
 
-  
+   public function paginated(string $sortBy, string $sort, int $perPage, int $page) : LengthAwarePaginator
+   {
+       return $this->userOrderRepository->paginated($sortBy, $sort, $perPage, $page);
+   }
 }
